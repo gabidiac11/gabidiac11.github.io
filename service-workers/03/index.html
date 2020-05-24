@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Detailed Registration</title>
+  </head>
+  <body>
+    <p>
+      Network status:
+      <strong id="status"></strong>
+    </p>
+    <div id="request" style="display: none;">
+      <input id="long-url" value="https://www.packtpub.com/" size="50" />
+      <input type="button" id="url-shortenbtn" value="Shorten URL" />
+    </div>
+    <div><input type="checkbox" id="mockcheckbox" checked />Mock Response</div>
+    <div>
+      <br />
+      <a href="" id="short-url"></a>
+    </div>
+    <script>
+      function printStatus(status) {
+        document.getElementById("status").innerHTML = status;
+      }
+      function showRequest() {
+        document
+          .getElementById("url-shortenbtn")
+          .addEventListener("click", sendRequest);
+
+        document.getElementById("request").style.display = "block";
+      }
+      function sendRequest() {
+        var xhr = new XMLHttpRequest(),
+          request;
+        xhr.open(
+          "POST",
+          "https://www.googleapis.com/urlshortener/v1/url?" + "key=[Your API Key]"
+        );
+        xhr.setRequestHeader("Content-Type", "application/json");
+        if (document.getElementById("mockcheckbox").checked) {
+          xhr.setRequestHeader("X-MockResponse", "yes");
+        }
+        xhr.addEventListener("load", function () {
+          var response = JSON.parse(xhr.response);
+          var el = document.getElementById("short-url");
+          el.href = response.id;
+          el.innerHTML = response.id;
+        });
+        request = {
+          longUrl: document.getElementById("long-url").value,
+        };
+        xhr.send(JSON.stringify(request));
+      }
+      
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("service-worker.js", { scope: "./" })
+          .then(function (registration) {
+            if (navigator.serviceWorker.controller) {
+            //After the service worker registers itself successfully, we check to
+            //make sure that it is currently handling the network operations before allowing the request to happen from a button click
+              printStatus("The service worker is currently handling network operations.");
+              showRequest();
+            } else {
+              printStatus("Please reload this page to allow the service worker to handle network operations.");
+            }
+          })
+          .catch(function (error) {
+            document.getElementById("status").innerHTML = error;
+          });
+      } else {
+        document.getElementById("status").innerHTML = "unavailable";
+      }
+    </script>
+  </body>
+</html>

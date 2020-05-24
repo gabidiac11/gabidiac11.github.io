@@ -1,0 +1,2 @@
+-> return sw data from cache version if exists else fetch from network
+-> check if is any INTERNET connection 

@@ -1,0 +1,2 @@
+-> register, install, activate
+-> important -> print sw status

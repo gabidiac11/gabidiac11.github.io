@@ -1,0 +1,2 @@
+-> use service worker to mock a post request
+-> it checks if service worker can do this operation or it needs a refresh
